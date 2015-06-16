@@ -10,3 +10,9 @@
                 :hand   []
                 :fields [(field/create)
                          (field/create)]}))
+
+(defn hand-size [player]
+  (->> player :hand count))
+
+(defn add-card [player card]
+  (update-in player [:hand] #(conj % card)))

@@ -1,29 +1,26 @@
-(ns beans.game.game-state)
+(ns beans.game.game-state
+  (:require [beans.game.deck   :as d]
+            [beans.game.player :as p]))
 
 (defrecord GameState [deck discard players])
 
 (defn- player-index [gs player]
-  (->> (:players gs)
-    (some (partial = player))))
+  (.indexOf (:players gs) player))
+
+(defn player [gs idx]
+  (nth (:players gs) idx))
 
 (defn modify-player [gs player modify-fn]
-  (let [index (player-index gs player)]
+  (let [players (:players gs)
+        index   (player-index gs player)]
     (if-not index
       (throw (Exception. "Player not in game."))
-      (update-in gs
-                 [:players index]
-                 modify-fn))))
-
-(defn player-modifier [modify-fn]
-  (fn [gs player]
-    (modify-player gs player modify-fn)))
+      (assoc players index
+                     (modify-fn player)))))
 
 (defn draw [gs player]
-  (map->GameState {:deck    (->> gs :deck rest)
+  (let [modify-fn (fn [player]
+                    (p/add-card player (->> gs :deck d/first)))]
+  (map->GameState {:deck    (->> gs :deck d/rest)
                    :discard (->> gs :discard)
-                   :players (modify-player gs
-                                           player
-                                           (fn [player]
-                                             ;(player/add-card
-                                              (identity
-                                               (->> gs :deck first))))}))
+                   :players (modify-player gs player modify-fn)})))

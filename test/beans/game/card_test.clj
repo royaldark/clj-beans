@@ -4,7 +4,13 @@
             [beans.game.field :as f])
   (:import [java.lang IllegalArgumentException]))
 
-(deftest field-value-test
+(deftest create-card-test
+  (testing "Card creation"
+    (let [weird-bean (c/create "Weird Bean" [1 2 3 4])]
+      (do (is (= "Weird Bean" (c/name weird-bean))
+          (is (= [1 2 3 4]    (c/harvests weird-bean))))))))
+
+(deftest card-value-test
   (testing "Card values:"
     (testing "calculate correctly"
       (do (is (= 2 (c/value c/SOY_BEAN 4)))

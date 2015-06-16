@@ -2,7 +2,14 @@
   (:require [beans.game.card :as c])
   (:import [java.lang IllegalArgumentException]))
 
-(defrecord Field [cards])
+(defrecord Field [cards]
+  Object
+  (toString [field]
+    (str "Field["
+      (count (:cards field))
+      " x "
+      (c/name (first (:cards field)))
+      "]")))
 
 (defn create []
   (Field. []))

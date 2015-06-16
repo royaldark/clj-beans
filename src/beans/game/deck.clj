@@ -1,4 +1,5 @@
 (ns beans.game.deck
+  (:refer-clojure :exclude [shuffle first rest])
   (:require [beans.game.card :as card]))
 
 (defrecord Deck [cards])
@@ -7,7 +8,8 @@
   (->> card-map
     (mapcat (fn [[card quantity]]
               (repeat quantity card)))
-    (into [])))
+    (into [])
+    (Deck.)))
 
 (def STANDARD_DECK
   (build-deck {card/COFFEE_BEAN     24
@@ -22,5 +24,23 @@
                card/GARDEN_BEAN     6
                card/COCOA_BEAN      4}))
 
+(defn shuffle [deck]
+  (->> (:cards deck)
+    (clojure.core/shuffle)
+    (Deck.)))
+
+(defn first [deck]
+  (->> (:cards deck)
+    (clojure.core/first)
+    (Deck.)))
+
+(defn rest [deck]
+  (->> (:cards deck)
+    (clojure.core/rest)
+    (Deck.)))
+
 (defn create []
   (shuffle STANDARD_DECK))
+
+(defn size [deck]
+  (->> deck :cards count))

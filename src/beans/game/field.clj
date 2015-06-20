@@ -1,4 +1,6 @@
 (ns beans.game.field
+  "Namespace for creating and manipulating Fields. Fields are immutable records
+   which represent a player's field they can play into."
   (:require [beans.game.card :as c])
   (:import [java.lang IllegalArgumentException]))
 

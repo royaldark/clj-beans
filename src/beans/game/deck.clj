@@ -1,15 +1,21 @@
 (ns beans.game.deck
+  "Namespace for creating and manipulating Deck records. The \"typical\" full
+   deck is exposed as STANDARD_DECK, but custom decks may be built using the
+   build-deck function."
   (:refer-clojure :exclude [shuffle first rest])
   (:require [beans.game.card :as card]))
 
 (defrecord Deck [cards])
 
-(defn- build-deck [card-map]
-  (->> card-map
-    (mapcat (fn [[card quantity]]
-              (repeat quantity card)))
-    (into [])
-    (Deck.)))
+(defn build-deck 
+  "Builds a Deck record out of a map {k v} where k is a Card record and v is
+   the quantity."
+  ([card-map]
+    (->> card-map
+      (mapcat (fn [[card quantity]]
+                (repeat quantity card)))
+      (into [])
+      (Deck.))))
 
 (def STANDARD_DECK
   (build-deck {card/COFFEE_BEAN     24

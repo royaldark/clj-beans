@@ -1,8 +1,15 @@
 (ns beans.game.game-state
+  "Namespace for creating and manipulating GameStates. GameStates are immutable
+   records which are a snapshot of a specific point of time in a game."
   (:require [beans.game.deck   :as d]
             [beans.game.player :as p]))
 
-(defrecord GameState [deck discard players]
+(def PLANTING_PHASE 0)
+(def TRADING_PHASE 1)
+(def POST_TRADING_PHASE 2)
+(def DRAW_PHASE 3)
+
+(defrecord GameState [deck discard players active-player phase]
   Object
    (toString [gs] (str "GameState["
                        "Deck: " (->> gs :deck d/size) " cards remaining, "
@@ -27,6 +34,8 @@
 (defn draw [gs player]
   (let [modify-fn (fn [player]
                     (p/add-card player (->> gs :deck d/first)))]
-  (map->GameState {:deck    (->> gs :deck d/rest)
-                   :discard (->> gs :discard)
-                   :players (modify-player gs player modify-fn)})))
+  (map->GameState {:deck          (->> gs :deck d/rest)
+                   :discard       (->> gs :discard)
+                   :players       (modify-player gs player modify-fn)
+                   :active-player (->> gs :active-player)
+                   :phase         (->> gs :phase)})))

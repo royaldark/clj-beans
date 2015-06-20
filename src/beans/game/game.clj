@@ -4,7 +4,12 @@
 
 (def INITIAL_DRAW 5)
 
-(defrecord Game [states])
+(defrecord Game [states]
+  Object
+    (toString [game] (str "Game["
+                          (->> game :states count) " states, "
+                          "current: " (->> game :states first)
+                          "]")))
 
 (defn create [players]
   (Game.
@@ -15,16 +20,26 @@
 (defn- modify-current-state [modify-fn]
   (fn [game & args]
     (let [modify-fn-args (concat [(->> game :states first)] args)]
-      (apply modify-fn modify-fn-args))))
+      (update-in game [:states]
+        #(conj % (apply modify-fn modify-fn-args))))))
 
 (def draw
   (modify-current-state gs/draw))
 
-(defn- draw-initial [player]
-  player)
+(defn- draw-initial-hand [game-state idx]
+  (->> game-state
+    (iterate #(gs/draw % (gs/player % idx)))
+    (take 6)
+    (last)))
+
+(defn- draw-initial-hands [initial-game-state]
+  (let [num-players (->> initial-game-state :players count)
+    _ (println num-players)]
+    (->> (range num-players)
+      (reduce draw-initial-hand initial-game-state))))
 
 (def start
-  (modify-current-state
-    (fn [state]
-      (update-in state [:players]
-        (partial map draw-initial)))))
+  (modify-current-state draw-initial-hands))
+
+(defn num-states [game]
+  (->> game :states count))

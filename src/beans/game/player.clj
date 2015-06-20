@@ -2,7 +2,14 @@
   (:require clojure.pprint
             [beans.game.field :as field]))
 
-(defrecord Player [name gold hand fields])
+(defrecord Player [name gold hand fields]
+  Object
+    (toString [player] (str "Player["
+                            "Name: " (:name player) ", "
+                            "Gold: " (:gold player) ", "
+                            "Hand: " (->> player :hand count) " cards, "
+                            "Fields: " (->> player :fields count)
+                            "]")))
 
 (defn create [name]
   (map->Player {:name   name

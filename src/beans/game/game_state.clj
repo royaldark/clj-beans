@@ -2,7 +2,13 @@
   (:require [beans.game.deck   :as d]
             [beans.game.player :as p]))
 
-(defrecord GameState [deck discard players])
+(defrecord GameState [deck discard players]
+  Object
+   (toString [gs] (str "GameState["
+                       "Deck: " (->> gs :deck d/size) " cards remaining, "
+                       "Discard: " (->> gs :discard count) " cards, "
+                       "Players: " (clojure.string/join ", " (:players gs))
+                       "]")))
 
 (defn- player-index [gs player]
   (.indexOf (:players gs) player))

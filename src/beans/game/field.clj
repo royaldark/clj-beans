@@ -13,13 +13,19 @@
       (c/name (first (:cards field)))
       "]")))
 
-(defn create []
+(defn create
+  "Creates and returns a new Field record."
+  []
   (Field. []))
 
-(defn size [field]
+(defn size
+  "Returns the number of cards in `field`."
+  [field]
   (->> field :cards count))
 
-(defn add [field new-card]
+(defn add
+  "Returns a new Field with `new-card` appended."
+  [field new-card]
   (let [top-card (->> field :cards first)]
   (if (or (nil? top-card)
           (= top-card new-card))
@@ -27,6 +33,8 @@
     (throw (IllegalArgumentException.
              (str "Can't add " new-card " to stack of " top-card))))))
 
-(defn value [field]
+(defn value
+  "Returns the value in gold of the cards in `field`."
+  [field]
   (let [cards (:cards field)]
     (c/value (first cards) (count cards))))

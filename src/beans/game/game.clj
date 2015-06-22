@@ -24,7 +24,9 @@
                                                  :players       players
                                                  :active-player (first players)
                                                  :phase         gs/PLANTING_PHASE})]
-    (Game. [initial-game-state] times-through-deck))))
+      (if (> 3 (count players))
+        (throw (IllegalArgumentException. "Cannot create game with less than 3 players."))
+        (Game. [initial-game-state] times-through-deck)))))
 
 (defn- modify-current-state [modify-fn]
   (fn [game & args]

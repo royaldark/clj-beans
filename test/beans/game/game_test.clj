@@ -6,11 +6,20 @@
             [beans.game.player     :as p])
   (:import [java.lang IllegalArgumentException]))
 
+(def player-1 (p/create "Joe"))
+(def player-2 (p/create "Brian"))
+(def player-3 (p/create "Dizzle"))
+
+(deftest bad-args-test
+  (testing "Bad constructor args:"
+    (testing "# players"
+      (do (is (thrown? IllegalArgumentException (g/create [])))
+          (is (thrown? IllegalArgumentException (g/create [player-1])))
+          (is (thrown? IllegalArgumentException (g/create [player-1 player-2])))))))
+
 (deftest initial-draw-test
   (testing "Initial draw:"
-    (let [player-1     (p/create "Joe")
-          player-2     (p/create "Brian")
-          game         (g/create [player-1 player-2])
+    (let [game         (g/create [player-1 player-2 player-3])
           started-game (g/start game)]
 
       (do (is (= 1 (g/num-states game)))

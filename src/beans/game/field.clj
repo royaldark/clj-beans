@@ -38,3 +38,20 @@
   [field]
   (let [cards (:cards field)]
     (c/value (first cards) (count cards))))
+
+(defn- max-harvest-for
+  "Returns the highest non-nil value in the Card's harvest info"
+  [card]
+  (if (nil? card)
+    0
+    (->> (:harvests card)
+         (remove nil?)
+         (last))))
+
+(defn full?
+  "Returns true if the number of Cards in the Field >= the maximum harvest for
+   that Card type, false otherwise."
+  [field]
+  (let [cards       (:cards field)
+        max-harvest (max-harvest-for (first cards))]
+    (>= (size field) max-harvest)))

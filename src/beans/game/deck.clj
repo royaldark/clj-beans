@@ -1,7 +1,7 @@
 (ns beans.game.deck
   "Namespace for creating and manipulating Deck records. The \"typical\" full
-   deck is exposed as STANDARD_DECK, but custom decks may be built using the
-   build-deck function."
+   deck is exposed as STANDARD_DECK, but the `create` method is preferred. For
+   decks other than the standard, try the lower-level `build-deck` method."
   (:refer-clojure :exclude [shuffle first rest])
   (:require [beans.game.card :as card]))
 
@@ -18,6 +18,8 @@
       (Deck.))))
 
 (def STANDARD_DECK
+  "The full set of standard cards, unshuffled and unadjusted for the number of
+   players. It is recommended Decks are created via the `create` method instead"
   (build-deck {card/COFFEE_BEAN     24
                card/WAX_BEAN        22
                card/BLUE_BEAN       20
@@ -29,13 +31,15 @@
                card/RED_BEAN        8
                card/GARDEN_BEAN     6
                card/COCOA_BEAN      4}))
-(def size
+(defn size
   "Returns the number of cards in the Deck"
-  (comp count :cards))
+  [deck]
+  (count (:cards deck)))
 
-(def first
+(defn first
   "Returns the top Card in the Deck"
-  (comp clojure.core/first :cards))
+  [deck]
+  (clojure.core/first (:cards deck)))
 
 (defn rest
   "Returns a new Deck with all Cards except the top"

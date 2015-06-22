@@ -40,10 +40,12 @@
     (c/value (first cards) (count cards))))
 
 (defn- max-harvest-for
-  "Returns the highest non-nil value in the Card's harvest info"
+  "If passed a Card, returns the highest non-nil value in the Card's harvest
+   info. If passed nil, returns Integer/MAX_VALUE. This lets empty fields never
+   be considered full (at least, not until they have Integer/MAX_VALUE Cards)"
   [card]
   (if (nil? card)
-    0
+    Integer/MAX_VALUE
     (->> (:harvests card)
          (remove nil?)
          (last))))

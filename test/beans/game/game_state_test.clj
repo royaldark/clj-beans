@@ -6,9 +6,12 @@
   (:import [java.lang IllegalArgumentException]))
 
 (defn empty-game-state []
-  (gs/map->GameState {:players [(p/create "Joe") (p/create "Bob")]
-                      :discard []
-                      :deck    (d/create)}))
+  (let [players [(p/create "Joe") (p/create "Bob")]]
+    (gs/map->GameState {:players       players
+                        :active-player (first players)
+                        :phase         gs/PLANTING_PHASE
+                        :discard       []
+                        :deck          (d/create)})))
 
 (deftest player-draw-test
   (testing "Player draw:"
@@ -42,4 +45,25 @@
         (do (is (= 144 (->> new-state :deck d/size)))
             (is (= 5 (->> (gs/player new-state 0) p/hand-size)))
             (is (= 5 (->> (gs/player new-state 1) p/hand-size))))))))
+
+(deftest phase-test
+  (testing "GameState phase transitions:"
+    (let [phase-1 (empty-game-state)
+          phase-2 (gs/next-phase phase-1)
+          phase-3 (gs/next-phase phase-2)
+          phase-4 (gs/next-phase phase-3)]
+
+    (testing "valid transitions"
+      (do (is (< (:phase phase-1)
+                 (:phase phase-2)
+                 (:phase phase-3)
+                 (:phase phase-4)))
+
+          (is (= (:active-player phase-1)
+                 (:active-player phase-2)
+                 (:active-player phase-3)
+                 (:active-player phase-4)))))
+
+    (testing "invalid transitions"
+      (is (thrown? IllegalArgumentException (gs/next-phase phase-4)))))))
 

@@ -15,6 +15,8 @@
 (def POST_TRADING_PHASE (new-phase))
 (def DRAW_PHASE (new-phase))
 
+(def ^:private NUM_PHASES @phase-counter)
+
 (defrecord GameState [deck discard players active-player phase]
   Object
    (toString [gs] (str "GameState["
@@ -56,4 +58,12 @@
 (defn harvest
   "Returns a new GameState where `player` has harvested field `field`."
   [gs player field]
-    (assoc gs :players (modify-player player #(p/harvest % field))))
+  (assoc gs :players (modify-player player #(p/harvest % field))))
+
+(defn next-phase
+  "Returns a new GameState in the next phase of the current turn."
+  [gs]
+  (if (>= (:phase gs) (dec NUM_PHASES))
+    (throw (IllegalArgumentException. "Cannot advance past last phase."))
+    (update-in gs [:phase] inc)))
+

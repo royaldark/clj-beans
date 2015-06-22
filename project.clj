@@ -7,5 +7,6 @@
   :main ^:skip-aot beans.core
   :target-path "target/%s"
   :profiles {:dev {:plugins [[com.jakemccrary/lein-test-refresh "0.9.0"]
-                             [codox                             "0.8.12"]]}
-  	         :uberjar {:aot :all}})
+                             [codox                             "0.8.12"]
+                             [lein-cloverage                    "1.0.6"]]}
+             :uberjar {:aot :all}})

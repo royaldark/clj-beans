@@ -29,24 +29,25 @@
                card/RED_BEAN        8
                card/GARDEN_BEAN     6
                card/COCOA_BEAN      4}))
+(def size
+  "Returns the number of cards in the Deck"
+  (comp count :cards))
 
-(defn shuffle [deck]
-  (->> (:cards deck)
-    (clojure.core/shuffle)
-    (Deck.)))
+(def first
+  "Returns the top Card in the Deck"
+  (comp clojure.core/first :cards))
 
-(defn first [deck]
-  (->> (:cards deck)
-    (clojure.core/first)
-    (Deck.)))
+(defn rest
+  "Returns a new Deck with all Cards except the top"
+  [deck]
+  (update-in deck [:cards] clojure.core/rest))
 
-(defn rest [deck]
-  (->> (:cards deck)
-    (clojure.core/rest)
-    (Deck.)))
+(defn shuffle
+  "Returns a new Deck where all the Cards have been shuffled"
+  [deck]
+  (update-in deck [:cards] clojure.core/shuffle))
 
-(defn create []
+(defn create
+  "The preferred way to generate Decks. Returns the STANDARD_DECK shuffled."
+  []
   (shuffle STANDARD_DECK))
-
-(defn size [deck]
-  (->> deck :cards count))

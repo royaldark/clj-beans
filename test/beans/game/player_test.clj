@@ -14,19 +14,26 @@
           (is (= [] (p/hand player)))))))
 
 (deftest harvest-test
-  (testing "Harvesting"
-    (let [soy-field     (-> (f/create)
-                          (f/add c/SOY_BEAN)
-                          (f/add c/SOY_BEAN)
-                          (f/add c/SOY_BEAN)
-                          (f/add c/SOY_BEAN))
-          player        (update-in (p/create "Joe") [:fields]
-                          (fn [fields] (assoc fields 0 soy-field)))
-          field          (p/field player 0)
-          harvest-player (p/harvest player field)
-          harvest-field  (p/field harvest-player 0)]
-      (do (is (= 0 (p/gold player)))
-          (is (= 2 (p/gold harvest-player)))
+  (testing "Harvesting: "
+    (testing "valid field"
+      (let [soy-field     (-> (f/create)
+                            (f/add c/SOY_BEAN)
+                            (f/add c/SOY_BEAN)
+                            (f/add c/SOY_BEAN)
+                            (f/add c/SOY_BEAN))
+            player        (update-in (p/create "Joe") [:fields]
+                            (fn [fields] (assoc fields 0 soy-field)))
+            field          (p/field player 0)
+            harvest-player (p/harvest player field)
+            harvest-field  (p/field harvest-player 0)]
+        (do (is (= 0 (p/gold player)))
+            (is (= 2 (p/gold harvest-player)))
 
-          (is (= 4 (f/size field)))
-          (is (= 0 (f/size harvest-field)))))))
+            (is (= 4 (f/size field)))
+            (is (= 0 (f/size harvest-field))))))
+
+    (testing "invalid field"
+      (let [player    (p/create "Joe")
+            soy-field (f/add (f/create) c/SOY_BEAN)]
+        (is (thrown? IllegalArgumentException
+              (p/harvest player soy-field)))))))

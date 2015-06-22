@@ -67,3 +67,22 @@
     (testing "invalid transitions"
       (is (thrown? IllegalArgumentException (gs/next-phase phase-4)))))))
 
+(deftest turn-test
+  (testing "GameState turn transitions:"
+    (let [phase-1 (empty-game-state)
+          phase-2 (gs/next-phase phase-1)
+          phase-3 (gs/next-phase phase-2)
+          phase-4 (gs/next-phase phase-3)]
+
+    (testing "valid transitions"
+      (let [new-turn (gs/next-turn phase-4)]
+        (do (is (not= (:active-player phase-4)
+                      (:active-player new-turn)))
+
+            (is (not= (:phase phase-4)
+                      (:phase new-turn))))))
+
+    (testing "invalid transitions"
+      (do (is (thrown? IllegalArgumentException (gs/next-turn phase-1)))
+          (is (thrown? IllegalArgumentException (gs/next-turn phase-2)))
+          (is (thrown? IllegalArgumentException (gs/next-turn phase-3))))))))

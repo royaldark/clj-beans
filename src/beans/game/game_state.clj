@@ -16,6 +16,7 @@
 (def DRAW_PHASE (new-phase))
 
 (def ^:private NUM_PHASES @phase-counter)
+(def ^:private LAST_PHASE (dec NUM_PHASES))
 
 (defrecord GameState [deck discard players active-player phase]
   Object
@@ -29,6 +30,17 @@
 
 (defn- player-index [gs player]
   (.indexOf (:players gs) player))
+
+(defn- next-player
+  "Returns the next player in line for play after the current."
+  [gs]
+  (let [players     (:players gs)
+        num-players (count players)
+        current     (:active-player gs)
+        next-idx    (inc (player-index gs current))]
+    (if (>= next-idx num-players)
+      (first players)
+      (nth players next-idx))))
 
 (defn player
   "Fetches Player at `idx` in GameState `gs`."
@@ -63,7 +75,16 @@
 (defn next-phase
   "Returns a new GameState in the next phase of the current turn."
   [gs]
-  (if (>= (:phase gs) (dec NUM_PHASES))
+  (if (>= (:phase gs) LAST_PHASE)
     (throw (IllegalArgumentException. "Cannot advance past last phase."))
     (update-in gs [:phase] inc)))
+
+(defn next-turn
+  "Returns a new GameState where play has passed to the next player"
+  [gs]
+  (if (not= (:phase gs) LAST_PHASE)
+    (throw (IllegalArgumentException. "Cannot advance to next turn unless in final phase"))
+    (merge gs
+           {:active-player (next-player gs)
+            :phase         PLANTING_PHASE})))
 
